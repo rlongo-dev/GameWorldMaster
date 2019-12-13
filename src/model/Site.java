@@ -1,47 +1,83 @@
 package model;
 
-
-public class Site {
-
-  private long siteId;
-  private String name;
-  private long stateId;
-  private long regionId;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
 
 
-  public long getSiteId() {
-    return siteId;
-  }
+/**
+ * The persistent class for the "site" database table.
+ * 
+ */
+@Entity
+@Table(name="site")
+@NamedQuery(name="Site.findAll", query="SELECT s FROM Site s")
+public class Site extends BaseEntity implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-  public void setSiteId(long siteId) {
-    this.siteId = siteId;
-  }
+	//@Column(name="id_state")
+	//private int idState;
 
+	@Column(name="name", length=45)
+	private String name;
 
-  public String getName() {
-    return name;
-  }
+	//bi-directional many-to-one association to District
+	@OneToMany(mappedBy="site")
+	private List<District> districts;
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	//bi-directional many-to-one association to State
+	@ManyToOne
+	//@JoinColumns({})
+	@JoinColumn(name="id_state")
+	private State state;
 
+	public Site() {
+	}
+	/*
+	public int getIdState() {
+		return this.idState;
+	}
 
-  public long getStateId() {
-    return stateId;
-  }
+	public void setIdState(int idState) {
+		this.idState = idState;
+	}
+	*/
+	public String getName() {
+		return this.name;
+	}
 
-  public void setStateId(long stateId) {
-    this.stateId = stateId;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
+	public List<District> getDistricts() {
+		return this.districts;
+	}
 
-  public long getRegionId() {
-    return regionId;
-  }
+	public void setDistricts(List<District> districts) {
+		this.districts = districts;
+	}
 
-  public void setRegionId(long regionId) {
-    this.regionId = regionId;
-  }
+	public District addDistrict(District district) {
+		getDistricts().add(district);
+		district.setSite(this);
+
+		return district;
+	}
+
+	public District removeDistrict(District district) {
+		getDistricts().remove(district);
+		district.setSite(null);
+
+		return district;
+	}
+
+	public State getState() {
+		return this.state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
 
 }
